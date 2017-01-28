@@ -11,6 +11,17 @@ import gzip
 from StringIO import StringIO
 
 
+def child_younger_than_parent(parent_file, child_file):
+    if os.path.isfile(parent_file) and os.path.isfile(child_file):
+        age_of_child_since_parent = os.stat(child_file).st_mtime - os.stat(parent_file).st_mtime
+        if age_of_child_since_parent > 0:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
 def extract_zip_to_txt(path_to_input_file, path_to_output_file, output_dir):
     """
     :param path_to_input_file: the zip file we will read
@@ -55,12 +66,13 @@ vcf_dir = "23andmedata/vcf"
 
 input_files = os.listdir(input_dir)
 for input_file in input_files:
+    input_file_path = os.path.join(input_dir, input_file)
     output_file_path = os.path.join(output_dir, input_file + ".txt")
     vcf_file_path = os.path.join(vcf_dir, input_file + ".vcf")
-    if not os.path.isfile(output_file_path) and not os.path.isfile(vcf_file_path):
-        input_file_path = os.path.join(input_dir, input_file)
+    if not child_younger_than_parent(input_file_path, output_file_path) \
+            and not child_younger_than_parent(input_file_path, vcf_file_path):
         file_format = magic.from_file(input_file_path)
-        if file_format == "Zip archive data, at least v2.0 to extract":
+        if re.search("^Zip archive data, at least", file_format):
             print extract_zip_to_txt(input_file_path, output_file_path, output_dir)
         elif file_format == "ASCII text, with CRLF line terminators":
             print copy_ascii_to_output(input_file, input_file_path, output_dir)
