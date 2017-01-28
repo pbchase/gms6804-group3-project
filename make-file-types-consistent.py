@@ -35,47 +35,43 @@ def copy_ascii_to_output(my_file, my_path, output_path):
     return("wrote %s from ascii" % new_name)
 
 
-def extract_gzip_to_txt(path_to_input_file, path_to_output_file):
+def extract_gzip_to_txt(path_to_input_file, path_to_output_file, output_dir):
     """
     :param path_to_input_file: the gzip file we will read
-    :param path_to_output_file: the final filename we must write
+    :param input_file: the bare name of the input file
+    :param output_dir: the directory into which the file should be extracted
     :return: an informational string about what we did.
     """
     #
-    zf = zipfile.ZipFile(path_to_input_file, 'r')
-    zip_info_list = zf.infolist()
-    for member in zip_info_list:
-        if re.search('^genome.*\.txt', member.filename):
-            zf.extract(member, output_dir)
-            old_name = (os.path.join(output_dir, member.filename))
-            os.rename(old_name, path_to_output_file)
-            return("wrote %s from zip" % path_to_output_file)
+    gz_file_name = path_to_output_file + '.gz'
+    shutil.copy(path_to_input_file, gz_file_name)
+    os.system("gunzip %s" % gz_file_name)
+    return("wrote %s from gzip" % path_to_output_file)
 
-
-def crlf_terminators_to_ascii(input_file):
-    """
-    Convert text
-
-        from: "ASCII English text, with CRLF line terminators"
-        to: "ASCII text"
-
-    """
-
-    f = open(input_file, 'rU')
 
 input_dir = "23andmedata/raw"
 output_dir = "23andmedata/unified"
+vcf_dir = "23andmedata/vcf"
 
 input_files = os.listdir(input_dir)
 for input_file in input_files:
-    output_file = os.path.join(output_dir, input_file + ".txt")
-    if not os.path.isfile(output_file):
+    output_file_path = os.path.join(output_dir, input_file + ".txt")
+    vcf_file_path = os.path.join(vcf_dir, input_file + ".vcf")
+    if not os.path.isfile(output_file_path) and not os.path.isfile(vcf_file_path):
         input_file_path = os.path.join(input_dir, input_file)
         file_format = magic.from_file(input_file_path)
         if file_format == "Zip archive data, at least v2.0 to extract":
-            extract_zip_to_txt(input_file_path, input_file, output_dir)
+            print extract_zip_to_txt(input_file_path, output_file_path, output_dir)
         elif file_format == "ASCII text, with CRLF line terminators":
-            copy_ascii_to_output(input_file, input_file_path, output_dir)
+            print copy_ascii_to_output(input_file, input_file_path, output_dir)
+        elif re.search("^gzip compressed data", file_format):
+            print extract_gzip_to_txt(input_file_path, output_file_path, output_dir)
+            if not magic.from_file(output_file_path) == "ASCII English text, with CRLF line terminators":
+                os.rename(output_file_path,vcf_file_path)
+                print "moving %s to %s" % (output_file_path,vcf_file_path)
+        elif re.search("^Variant Call Format", file_format):
+            os.rename(input_file_path,vcf_file_path)
+            print "moving %s to %s" % (input_file_path,vcf_file_path)
         else:
             print "%s is %s" % (input_file_path, file_format)
 
