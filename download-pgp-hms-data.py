@@ -20,13 +20,13 @@ def download(url='', name=''):
         c.close()
 
 
-def extract_download_data(soup, website_root):
+def extract_23andme_data(soup, website_root):
     """
-    Search a pgp-hms genomics web page for specific downloadable files
+    Scrap a pgp-hms genomics web page of 23andMe data for the URLs to download
     :param soup: the object representing the web page we are scraping
     :param website_root: a protocol and hostname that will be prepended to each URL
     :return file_names, urls: a tuple of dictionaries providing URLS to download
-            and the local name for each file downloaded
+            and the desired local name for each file downloaded
     """
     file_names = {}
     urls = {}
@@ -42,9 +42,11 @@ def extract_download_data(soup, website_root):
     return urls, file_names
 
 
-def download_files(urls, file_names, limit):
+def download_files(urls, download_directory, file_names, limit):
     """
     :param urls: a dict of the urls to download keyed on the subject to which they apply
+    :param download_directory: the local directory into which files should be written
+    :param file_names: A dict of the desired local file names keyed on the subject to which they apply
     :param limit: the maximum number of files we should download in this session
     :return:
     """
@@ -62,14 +64,13 @@ def download_files(urls, file_names, limit):
             print "Skipping download of " + my_filename
 
 
-# only download this many files
-limit = 705
 # prepend this portion of a URL to every URL we read from the file
 website_root = 'https://my.pgp-hms.org'
-download_directory = '23andmedata/raw/'
 
+# Download the 23andMe files
 soup = BeautifulSoup(open("23andmeHtmlOnly.htm"), "lxml")
-
-urls, file_names = extract_download_data(soup, website_root)
+download_directory = '23andmedata/raw/'
+urls, file_names = extract_23andme_data(soup, website_root)
 print "Subject count: " + str(len(urls))
-download_files(urls, file_names, limit)
+limit = 705  # only download this many files
+download_files(urls, download_directory, file_names, limit)
