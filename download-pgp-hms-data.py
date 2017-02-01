@@ -4,42 +4,64 @@ from bs4 import BeautifulSoup
 import pycurl
 import os.path
 
-def download(url='', name=''):
-	with open(name, 'wb') as f:
-	    c = pycurl.Curl()
-	    c.setopt(c.FOLLOWLOCATION, True)
-	    c.setopt(c.URL, url)
-	    c.setopt(c.WRITEDATA, f)
-	    c.perform()
-	    c.close()
 
-limit = 20
+def download(url='', name=''):
+    """
+    :param url: a URL to read
+    :param name: the output file name into which content should be written
+    :return: none
+    """
+    with open(name, 'wb') as f:
+        c = pycurl.Curl()
+        c.setopt(c.FOLLOWLOCATION, True)
+        c.setopt(c.URL, url)
+        c.setopt(c.WRITEDATA, f)
+        c.perform()
+        c.close()
+
+
+def extract_download_data(website_root):
+    """
+    Search a pgp-hms genomics web page for specific downloadable files
+    :param website_root: a protocol and hostname that will be prepended to each URL
+    :return file_names, urls: a tuple of dictionaries providing URLS to download
+            and the local name for each file downloaded
+    """
+    file_names = {}
+    urls = {}
+
+    for row in soup.findAll('tr'):
+        # find each table cell in this row
+        aux = row.findAll('td')
+        if len(aux) > 0:
+            subject = aux[1].a.contents[0]
+            file_names[subject] = subject
+            url = website_root + aux[6].find('a').get('href')
+            urls[subject] = url
+    return file_names, urls
+
+# only download this many files
+limit = 705
+# prepend this portion of a URL to every URL we read from the file
+website_root = 'https://my.pgp-hms.org'
+download_directory = '23andmedata/raw/'
+
 soup = BeautifulSoup(open("23andmeHtmlOnly.htm"), "lxml")
 
-#print soup.find('td',attr={'data-summarize-as':"participant"})
-
-filenames = {}
-urls = {}
-for row in soup.findAll('tr'):
-    aux = row.findAll('td')
-    if len(aux) > 0:
-    	subject = aux[1].a.contents[0]
-    	filenames[subject] = subject
-    	url = 'https://my.pgp-hms.org' + aux[6].find('a').get('href')
-    	urls[subject] = url
+file_names, urls = extract_download_data(website_root)
 
 print "Subject count: " + str(len(urls))
 
 # download only limit files
-download_count=0
-for subject in filenames.keys():
-	if download_count >= limit:
-		break
-	myfilename = os.path.join('23andmedata/raw/', filenames[subject])
-	if (not os.path.isfile(myfilename)):
-		print "Downloading " + urls[subject] + \
-			" to " + myfilename
-		download(urls[subject], myfilename)
-		download_count += 1
-	else:
-		print "Skipping download of " + myfilename
+download_count = 0
+for subject in file_names.keys():
+    if download_count >= limit:
+        break
+    my_filename = os.path.join(download_directory, file_names[subject])
+    if not os.path.isfile(my_filename):
+        print "Downloading " + urls[subject] + \
+            " to " + my_filename
+        download(urls[subject], my_filename)
+        download_count += 1
+    else:
+        print "Skipping download of " + my_filename
