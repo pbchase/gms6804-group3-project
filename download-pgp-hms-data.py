@@ -20,9 +20,10 @@ def download(url='', name=''):
         c.close()
 
 
-def extract_download_data(website_root):
+def extract_download_data(soup, website_root):
     """
     Search a pgp-hms genomics web page for specific downloadable files
+    :param soup: the object representing the web page we are scraping
     :param website_root: a protocol and hostname that will be prepended to each URL
     :return file_names, urls: a tuple of dictionaries providing URLS to download
             and the local name for each file downloaded
@@ -38,7 +39,28 @@ def extract_download_data(website_root):
             file_names[subject] = subject
             url = website_root + aux[6].find('a').get('href')
             urls[subject] = url
-    return file_names, urls
+    return urls, file_names
+
+
+def download_files(urls, file_names, limit):
+    """
+    :param urls: a dict of the urls to download keyed on the subject to which they apply
+    :param limit: the maximum number of files we should download in this session
+    :return:
+    """
+    download_count = 0
+    for subject in file_names.keys():
+        if download_count >= limit:
+            break
+        my_filename = os.path.join(download_directory, file_names[subject])
+        if not os.path.isfile(my_filename):
+            print "Downloading " + urls[subject] + \
+                " to " + my_filename
+            download(urls[subject], my_filename)
+            download_count += 1
+        else:
+            print "Skipping download of " + my_filename
+
 
 # only download this many files
 limit = 705
@@ -48,20 +70,6 @@ download_directory = '23andmedata/raw/'
 
 soup = BeautifulSoup(open("23andmeHtmlOnly.htm"), "lxml")
 
-file_names, urls = extract_download_data(website_root)
-
+urls, file_names = extract_download_data(soup, website_root)
 print "Subject count: " + str(len(urls))
-
-# download only limit files
-download_count = 0
-for subject in file_names.keys():
-    if download_count >= limit:
-        break
-    my_filename = os.path.join(download_directory, file_names[subject])
-    if not os.path.isfile(my_filename):
-        print "Downloading " + urls[subject] + \
-            " to " + my_filename
-        download(urls[subject], my_filename)
-        download_count += 1
-    else:
-        print "Skipping download of " + my_filename
+download_files(urls, file_names, limit)
