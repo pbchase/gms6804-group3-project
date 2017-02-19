@@ -102,7 +102,9 @@ for input_file in input_files:
             print copy_ascii_to_output(input_file, input_file_path, output_dir)
         elif re.search("^gzip compressed data", file_format):
             print extract_gzip_to_txt(input_file_path, output_file_path, output_dir)
-            if not magic.from_file(output_file_path) == "ASCII English text, with CRLF line terminators":
+            magic_number = magic.from_file(output_file_path)
+            print "file type of %s is %s" % (output_file_path, magic_number)
+            if not re.search('ASCII (English |)text, with CRLF line terminators', magic.from_file(output_file_path)):
                 os.rename(output_file_path,vcf_file_path)
                 print "moving %s to %s" % (output_file_path,vcf_file_path)
         elif re.search("^Variant Call Format", file_format):
