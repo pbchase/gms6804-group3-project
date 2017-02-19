@@ -21,6 +21,12 @@ def child_younger_than_parent(parent_file, child_file):
     else:
         return False
 
+def extract_one_member_from_zip(zf, member, output_dir, path_to_output_file):
+    zf.extract(member, output_dir)
+    old_name = (os.path.join(output_dir, member.filename))
+    os.rename(old_name, path_to_output_file)
+    return("wrote %s from zip" % path_to_output_file)
+
 
 def extract_zip_to_txt(path_to_input_file, path_to_output_file, output_dir):
     """
@@ -35,12 +41,14 @@ def extract_zip_to_txt(path_to_input_file, path_to_output_file, output_dir):
     except zipfile.BadZipfile:
         return "%s is a bad zip file. Skipping file" % path_to_input_file
     zip_info_list = zf.infolist()
-    for member in zip_info_list:
-        if re.search('^genome.*\.txt', member.filename):
-            zf.extract(member, output_dir)
-            old_name = (os.path.join(output_dir, member.filename))
-            os.rename(old_name, path_to_output_file)
-            return("wrote %s from zip" % path_to_output_file)
+    if len(zip_info_list) == 1:
+        member = zip_info_list[0]
+        return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file))
+    else:
+        for member in zip_info_list:
+            if re.search('^genome.*\.txt', member.filename):
+                return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file))
+    return("unsure what to do with zip file")
 
 
 def copy_ascii_to_output(my_file, my_path, output_path):
