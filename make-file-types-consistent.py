@@ -30,7 +30,10 @@ def extract_zip_to_txt(path_to_input_file, path_to_output_file, output_dir):
     :return: an informational string about what we did.
     """
     # extract genome*.txt from the zip file and name it subject_id.txt
-    zf = zipfile.ZipFile(path_to_input_file, 'r')
+    try:
+        zf = zipfile.ZipFile(path_to_input_file, 'r')
+    except zipfile.BadZipfile:
+        return "%s is a bad zip file. Skipping file" % path_to_input_file
     zip_info_list = zf.infolist()
     for member in zip_info_list:
         if re.search('^genome.*\.txt', member.filename):
