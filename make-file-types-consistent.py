@@ -41,13 +41,25 @@ def extract_zip_to_txt(path_to_input_file, path_to_output_file, output_dir):
     except zipfile.BadZipfile:
         return "%s is a bad zip file. Skipping file" % path_to_input_file
     zip_info_list = zf.infolist()
+
+    # extract file from one-member zip files
     if len(zip_info_list) == 1:
         member = zip_info_list[0]
         return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file))
-    else:
-        for member in zip_info_list:
-            if re.search('^genome.*\.txt', member.filename):
-                return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file))
+
+    # extract a very common name for 23andMe files
+    for member in zip_info_list:
+        if re.search('^genome.*\.txt', member.filename):
+            return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file))
+
+    # extract the single file not in a __MACOSX dir
+    member_count = len(zip_info_list)
+    for member in zip_info_list:
+        if re.search('^__MACOSX', member.filename):
+            member_count -= 1
+        if member_count == 1:
+            return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file))
+
     return("unsure what to do with zip file")
 
 
