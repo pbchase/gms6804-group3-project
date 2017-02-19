@@ -84,24 +84,24 @@ def extract_gzip_to_txt(path_to_input_file, path_to_output_file, output_dir):
 
 
 input_dir = "23andmedata/raw"
-output_dir = "23andmedata/unified"
+txt_dir = "23andmedata/txt"
 vcf_dir = "23andmedata/vcf"
 
 input_files = os.listdir(input_dir)
 for input_file in input_files:
     input_file_path = os.path.join(input_dir, input_file)
-    output_file_path = os.path.join(output_dir, input_file + ".txt")
+    output_file_path = os.path.join(txt_dir, input_file + ".txt")
     vcf_file_path = os.path.join(vcf_dir, input_file + ".vcf")
     if not child_younger_than_parent(input_file_path, output_file_path) \
             and not child_younger_than_parent(input_file_path, vcf_file_path):
         file_format = magic.from_file(input_file_path)
         print "Processing %s" % input_file_path ,
         if re.search("^Zip archive data, at least", file_format):
-            print extract_zip_to_txt(input_file_path, output_file_path, output_dir)
+            print extract_zip_to_txt(input_file_path, output_file_path, txt_dir)
         elif file_format == "ASCII text, with CRLF line terminators":
-            print copy_ascii_to_output(input_file, input_file_path, output_dir)
+            print copy_ascii_to_output(input_file, input_file_path, txt_dir)
         elif re.search("^gzip compressed data", file_format):
-            print extract_gzip_to_txt(input_file_path, output_file_path, output_dir)
+            print extract_gzip_to_txt(input_file_path, output_file_path, txt_dir)
             magic_number = magic.from_file(output_file_path)
             print "file type of %s is %s" % (output_file_path, magic_number)
             if not re.search('ASCII (English |)text, with CRLF line terminators', magic.from_file(output_file_path)):
