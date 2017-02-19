@@ -72,6 +72,7 @@ for input_file in input_files:
     if not child_younger_than_parent(input_file_path, output_file_path) \
             and not child_younger_than_parent(input_file_path, vcf_file_path):
         file_format = magic.from_file(input_file_path)
+        print "Processing %s" % input_file_path ,
         if re.search("^Zip archive data, at least", file_format):
             print extract_zip_to_txt(input_file_path, output_file_path, output_dir)
         elif file_format == "ASCII text, with CRLF line terminators":
