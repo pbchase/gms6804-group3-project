@@ -9,6 +9,15 @@ import re
 import shutil
 import gzip
 from StringIO import StringIO
+import csv
+
+
+class Log:
+    def __init__(self, output_file=''):
+        self.output = csv.writer(open(output_file, 'a'), delimiter=',')
+
+    def log(self, line):
+        self.output.writerow(line)
 
 
 def child_younger_than_parent(parent_file, child_file):
@@ -21,14 +30,15 @@ def child_younger_than_parent(parent_file, child_file):
     else:
         return False
 
-def extract_one_member_from_zip(zf, member, output_dir, path_to_output_file):
+def extract_one_member_from_zip(zf, member, output_dir, path_to_output_file, input_file):
     zf.extract(member, output_dir)
     old_name = (os.path.join(output_dir, member.filename))
     os.rename(old_name, path_to_output_file)
+    mylog.log([input_file, "member_name", member.filename])
     return("wrote %s from zip" % path_to_output_file)
 
 
-def extract_zip_to_txt(path_to_input_file, path_to_output_file, output_dir):
+def extract_zip_to_txt(input_file, path_to_input_file, path_to_output_file, output_dir):
     """
     :param path_to_input_file: the zip file we will read
     :param path_to_output_file: the final filename we must write
@@ -39,18 +49,23 @@ def extract_zip_to_txt(path_to_input_file, path_to_output_file, output_dir):
     try:
         zf = zipfile.ZipFile(path_to_input_file, 'r')
     except zipfile.BadZipfile:
+        mylog.log([input_file, "archive_content", "archive_is_bad"])
         return "%s is a bad zip file. Skipping file" % path_to_input_file
     zip_info_list = zf.infolist()
-
+    mylog.log([input_file, "archive_member_count", len(zip_info_list)])
     # extract file from one-member zip files
     if len(zip_info_list) == 1:
         member = zip_info_list[0]
-        return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file))
+        mylog.log([input_file, "archive_content", "single_member"])
+        if re.search('^genome.*\.txt', member.filename):
+            mylog.log([input_file, "archive_content", "name_is_genome_mumble_txt"])
+        return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file, input_file))
 
     # extract a very common name for 23andMe files
     for member in zip_info_list:
         if re.search('^genome.*\.txt', member.filename):
-            return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file))
+            mylog.log([input_file, "archive_content", "name_is_genome_mumble_txt"])
+            return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file, input_file))
 
     # extract the single file not in a __MACOSX dir
     member_count = len(zip_info_list)
@@ -58,8 +73,10 @@ def extract_zip_to_txt(path_to_input_file, path_to_output_file, output_dir):
         if re.search('^__MACOSX', member.filename):
             member_count -= 1
         if member_count == 1:
-            return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file))
+            mylog.log([input_file, "archive_content", "archive_has_macosx_artifacts"])
+            return(extract_one_member_from_zip(zf, member, output_dir, path_to_output_file, input_file))
 
+    mylog.log([input_file, "archive_content", "unsure_what_to_do_with_content"])
     return("unsure what to do with zip file")
 
 
@@ -105,26 +122,41 @@ def convert_raw_input_to_txt_or_vcf(input_dir, txt_dir, vcf_dir, adna_dir):
                 and not child_younger_than_parent(input_file_path, vcf_file_path) \
                 and not child_younger_than_parent(input_file_path, adna_file_path):
             file_format = magic.from_file(input_file_path)
+            mylog.log([input_file, "actual_file_type_from_magic_number", file_format])
             print "Processing %s" % input_file_path ,
             if re.search("^Zip archive data, at least", file_format):
-                print extract_zip_to_txt(input_file_path, output_file_path, txt_dir)
+                print extract_zip_to_txt(input_file, input_file_path, output_file_path, txt_dir)
+                mylog.log([input_file, "download_type", "archive"])
             elif file_format == "ASCII text, with CRLF line terminators":
                 if is_adna_file(input_file_path):
                     print copy_ascii_to_output(input_file, input_file_path, adna_dir)
+                    mylog.log([input_file, "download_type", "text"])
+                    mylog.log([input_file, "text_file_subtype", "AncestryDNA"])
                 else:
                     print copy_ascii_to_output(input_file, input_file_path, txt_dir)
+                    mylog.log([input_file, "download_type", "text"])
+                    mylog.log([input_file, "text_file_subtype", "23andMe"])
             elif re.search("^gzip compressed data", file_format):
                 print extract_gzip_to_txt(input_file_path, output_file_path, txt_dir)
+                mylog.log([input_file, "download_type", "archive"])
                 magic_number = magic.from_file(output_file_path)
+                mylog.log([input_file, "member_type_from_magic_number", file_format])
                 print "file type of %s is %s" % (output_file_path, magic_number)
                 if not re.search('ASCII (English |)text, with CRLF line terminators', magic.from_file(output_file_path)):
                     os.rename(output_file_path,vcf_file_path)
+                    mylog.log([input_file, "text_file_subtype", "vcf"])
                     print "moving %s to %s" % (output_file_path,vcf_file_path)
+                else:
+                    mylog.log([input_file, "text_file_subtype", "23andMe"])
+
             elif re.search("^Variant Call Format", file_format):
                 os.rename(input_file_path,vcf_file_path)
                 print "moving %s to %s" % (input_file_path,vcf_file_path)
+                mylog.log([input_file, "download_type", "text"])
+                mylog.log([input_file, "text_file_subtype", "vcf"])
             else:
                 print "%s is %s" % (input_file_path, file_format)
+                mylog.log([input_file, "download_type", "other"])
 
 
 def convert_23andme_to_vcf(filename, input_dir, output_dir):
@@ -143,12 +175,17 @@ def convert_23andme_to_vcf(filename, input_dir, output_dir):
             (name_of_vcf_file, name_of_compressed_vcf_file))
         os.unlink(name_of_vcf_file)
         os.system("tabix -f -p vcf %s" % name_of_compressed_vcf_file)
+        mylog.log([base_name_of_file, "indexed_vcf_available", "True"])
 
 
 input_dir = "23andmedata/raw"
 txt_dir = "23andmedata/txt"
 vcf_dir = "23andmedata/vcf"
 adna_txt = "adna/txt"
+
+conversion_log = "conversion_log.csv"
+mylog = Log(conversion_log)
+
 convert_raw_input_to_txt_or_vcf(input_dir, txt_dir, vcf_dir, adna_txt)
 
 
