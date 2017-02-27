@@ -93,24 +93,31 @@ def is_adna_file(input_file):
     """
     Search for an Ancestry DNA header line in input_file
     """
-    return(grep_file_for_header(input_file, header_line='#AncestryDNA raw data download'))
+    return(search_file_for_header(input_file, header_line='#AncestryDNA raw data download'))
 
 
 def is_23andme_file(input_file):
     """
     Search for a 23andMe header line in input_file
+    rs3094315       1       742429  AA
+    ^rs\d+\s+\d+\s\d+\s+[A-Z]{2}\s*$
     """
-    return(grep_file_for_header(input_file, header_line='23andme.com/'))
+    with open(input_file, 'r') as inF:
+        for line in inF:
+
+            if re.match("^rs\d+\s+\d+\s\d+\s+[A-Z]{2}\s*$", line) :
+                return True
+    return False
 
 
 def is_vcf_file(input_file):
     """
     Search for a VCF header line in input_file
     """
-    return(grep_file_for_header(input_file, header_line='##fileformat=VCFv'))
+    return(search_file_for_header(input_file, header_line='##fileformat=VCFv'))
 
 
-def grep_file_for_header(input_file, header_line):
+def search_file_for_header(input_file, header_line):
     with open(input_file, 'r') as inF:
         for line in inF:
             if header_line in line:
