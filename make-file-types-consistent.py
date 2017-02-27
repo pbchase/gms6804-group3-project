@@ -189,6 +189,7 @@ def convert_raw_input_to_txt_or_vcf(input_dir, txt_dir, vcf_dir, adna_dir, uk_di
                 mylog.log([input_file, "download_type", "archive"])
                 mylog.log([input_file, "member_type_from_magic_number", magic.from_file(temp_archive_output_file_path)])
                 sort_text_file_by_subtype(input_file, temp_archive_output_file_path, txt_dir, vcf_dir, adna_dir, uk_dir)
+                os.unlink(temp_archive_output_file_path)
             elif file_format == "ASCII text, with CRLF line terminators":
                 sort_text_file_by_subtype(input_file, input_file_path, txt_dir, vcf_dir, adna_dir, uk_dir)
             elif re.search("^gzip compressed data", file_format):
@@ -196,6 +197,7 @@ def convert_raw_input_to_txt_or_vcf(input_dir, txt_dir, vcf_dir, adna_dir, uk_di
                 mylog.log([input_file, "download_type", "archive"])
                 mylog.log([input_file, "actual_file_type_from_magic_number", magic.from_file(temp_archive_output_file_path)])
                 sort_text_file_by_subtype(input_file, temp_archive_output_file_path, txt_dir, vcf_dir, adna_dir, uk_dir)
+                os.unlink(temp_archive_output_file_path)
             elif re.search("^Variant Call Format", file_format):
                 os.rename(input_file_path,vcf_file_path)
                 print "moving %s to %s" % (input_file_path,vcf_file_path)
