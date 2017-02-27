@@ -206,6 +206,13 @@ def convert_raw_input_to_txt_or_vcf(input_dir, txt_dir, vcf_dir, adna_dir, uk_di
                 mylog.log([input_file, "download_type", "other"])
 
 
+def run_vcf_step(base_name_of_file, command):
+    exit_status = os.WEXITSTATUS(os.system(command))
+    if exit_status > 0:
+        mylog.log([base_name_of_file, "indexed_vcf_available", "False"])
+        return (exit_status)
+
+
 def convert_23andme_to_vcf(filename, input_dir, output_dir):
     print ' '.join([filename, input_dir, output_dir])
     input_file = os.path.join(input_dir, filename)
@@ -216,12 +223,16 @@ def convert_23andme_to_vcf(filename, input_dir, output_dir):
     if not child_younger_than_parent(input_file, name_of_compressed_vcf_file) \
             and not child_younger_than_parent(name_of_compressed_vcf_file, name_of_vcf_index_file):
         output_file_parameter_for_plink = os.path.join(output_dir, base_name_of_file)
-        os.system("./plink --23file %s --snps-only just-acgt --recode vcf --out %s" %
-            (input_file, output_file_parameter_for_plink))
-        os.system("cat %s | bgzip > %s" %
-            (name_of_vcf_file, name_of_compressed_vcf_file))
+        exit_status = run_vcf_step(base_name_of_file, "./plink --23file %s --snps-only just-acgt --recode vcf --out %s" % (input_file, output_file_parameter_for_plink))
+        if exit_status > 0:
+            return (exit_status)
+        exit_status = run_vcf_step(base_name_of_file, "cat %s | bgzip > %s" % (name_of_vcf_file, name_of_compressed_vcf_file))
+        if exit_status > 0:
+            return (exit_status)
         os.unlink(name_of_vcf_file)
-        os.system("tabix -f -p vcf %s" % name_of_compressed_vcf_file)
+        exit_status = run_vcf_step(base_name_of_file, "tabix -f -p vcf %s" % name_of_compressed_vcf_file)
+        if exit_status > 0:
+            return (exit_status)
         mylog.log([base_name_of_file, "indexed_vcf_available", "True"])
 
 
