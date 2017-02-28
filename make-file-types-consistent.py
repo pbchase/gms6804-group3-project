@@ -229,8 +229,7 @@ def convert_23andme_to_vcf(filename, input_dir, output_dir):
     name_of_vcf_file = os.path.join(output_dir, base_name_of_file + ".vcf")
     name_of_compressed_vcf_file = os.path.join(output_dir, base_name_of_file + ".vcf.gz")
     name_of_vcf_index_file = os.path.join(output_dir, base_name_of_file + ".vcf.gz")
-    if not child_younger_than_parent(input_file, name_of_compressed_vcf_file) \
-            and not child_younger_than_parent(name_of_compressed_vcf_file, name_of_vcf_index_file):
+    if not os.path.isfile(name_of_compressed_vcf_file):
         output_file_parameter_for_plink = os.path.join(output_dir, base_name_of_file)
         exit_status = run_vcf_step(base_name_of_file, "./plink --23file %s --snps-only just-acgt --recode vcf --out %s" % (input_file, output_file_parameter_for_plink))
         if exit_status > 0:
