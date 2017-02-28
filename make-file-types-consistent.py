@@ -16,6 +16,10 @@ class Log:
     def __init__(self, output_file=''):
         self.output = csv.writer(open(output_file, 'a'), delimiter=',')
 
+    def write_header(self):
+        header_row = ['subject','attribute','value']
+        self.log(header_row)
+
     def log(self, line):
         self.output.writerow(line)
 
@@ -250,6 +254,7 @@ temp_dir = "temp"
 
 conversion_log = "conversion_log.csv"
 mylog = Log(conversion_log)
+mylog.write_header()
 
 convert_raw_input_to_txt_or_vcf(input_dir, txt_dir, vcf_dir, adna_txt, unknown_txt, temp_dir)
 
