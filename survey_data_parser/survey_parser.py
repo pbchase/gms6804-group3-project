@@ -14,7 +14,7 @@ filenames = ['PGPTraitandDiseaseSurvey2012-Blood.csv',
              'PGPTraitandDiseaseSurvey2012-SkinAndSubcutaneousTissue.csv',
              'PGPTraitandDiseaseSurvey2012-VisionAndHearing.csv']
 
-blood_header = ('Participant', 'Iron deficiency anemia', 'Pernicious anemia (a.k.a. \"AddisonBiermer anemia\")',
+blood_header = ('Participant', 'Iron deficiency anemia', 'Pernicious anemia (a.k.a. Addison-Biermer anemia)',
                 'Folate deficiency anemia', 'Hereditary spherocytosis', 'G6PD deficiency', 'Sickle cell trait (carrier)',
                 'Sickle cell anemia', 'Autoimmune hemolytic anemia', 'Hemophilia', 'Von Willebrand disease',
                 'Idiopathic thrombocytopenic purpura (ITP)', 'Hereditary thrombophilia (includes Factor V Leiden and Prothrombin G20210A)',
@@ -169,7 +169,7 @@ for filename in filenames:
             else:
                 output_row = []
                 i=0
-                while i <= len(header):
+                while i < len(header):
                     output_row.insert(i,'0')
                     i+=1
                 #print(row)
