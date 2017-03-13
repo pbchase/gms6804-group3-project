@@ -1,0 +1,57 @@
+---
+title: "Acquisition and Cleaning of 23andMe Genomic Data"
+author: "Philip Chase"
+date: "3/12/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r read_data, echo=FALSE, results="hide", message=FALSE}
+setwd('/Users/pbchase/classes/gms6804-group3-project')
+
+df <- read.csv('conversion_log_20170312T2211.csv', stringsAsFactors=FALSE)
+library(tidyr)
+library(dplyr)
+wide_df <- df %>% spread(attribute, value)
+str(wide_df)
+summary(wide_df)
+
+# aggregate similar magic number strings to reduce number of factors
+combine_magic_numbers <- function(x) {
+  x <- gsub("^(ascii text).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(ISO-8859 text).*", "ASCII text", x, ignore.case=TRUE)
+  x <- gsub("^(Variant Call Format).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(Composite Document File V2).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(jpeg).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(html).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(SAMtools BAI).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(bzip2).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(gzip).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(pdf).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(SQLite 3.x database).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(zip).*", "\\1", x, ignore.case=TRUE)
+}
+
+wide_df$combined_file_type <- combine_magic_numbers(wide_df$actual_file_type_from_magic_number)
+wide_df$combined_file_type_of_member <- combine_magic_numbers(wide_df$member_type_from_magic_number)
+
+# fix column classes
+wide_df$archive_member_count <- as.integer(wide_df$archive_member_count)
+wide_df <- wide_df %>% mutate_if(is.character,as.factor)
+wide_df$subject <- as.character(wide_df$subject)
+wide_df$member_name <- as.character(wide_df$member_name)
+```
+
+## Overview
+
+Processed log data looks like 
+
+```{r summarize_wide_df}
+summary(wide_df)
+```
+
+I'm working on the outline to this document at https://docs.google.com/document/d/1Y2vzSo_cbuu22CYgn919ksKFWHEGim1O42pc43W6yYo/edit#
+I'm using this to guide what stats and visuals I provide form the log data.
