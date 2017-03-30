@@ -1,7 +1,7 @@
 ---
 title: "Acquisition and Cleaning of 23andMe Genomic Data"
 author: "Philip Chase"
-date: "3/12/2017"
+date: "3/29/2017"
 output: html_document
 ---
 
@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r read_data, echo=FALSE, results="hide", message=FALSE}
 setwd('/Users/pbchase/classes/gms6804-group3-project')
 
-df <- read.csv('conversion_log_20170312T2211.csv', stringsAsFactors=FALSE)
+df <- read.csv('combined_conversion_log.csv', stringsAsFactors=FALSE)
 library(tidyr)
 library(dplyr)
 wide_df <- df %>% spread(attribute, value)
@@ -55,3 +55,27 @@ summary(wide_df)
 
 I'm working on the outline to this document at https://docs.google.com/document/d/1Y2vzSo_cbuu22CYgn919ksKFWHEGim1O42pc43W6yYo/edit#
 I'm using this to guide what stats and visuals I provide form the log data.
+
+## Bar charts to make
+
+* combined_file_type - aggregated file types of actual downloads
+* combined_file_type_of_member - aggregated file types after extracting good content from archives
+* text_file_subtype - categorization of the text files after extracting good content from archives
+* archive_content - categorization of archive content
+
+## histograms to make
+
+* archive_member_count - could be very boring, but we should generate it to find out
+
+## subject identifiers in file names of .zip files
+
+We need a way to characterize the file naming patterns in the zip fiels for the subjects described by `archive_content == "name_is_genome_mumble_txt" | archive_content == "other_name"`. This could get into a discussion about identifiers and the risk of incidental exposure of identifiers in self-reported data.  
+
+We will also need to review the data collection policies of the study to see if they were aware of this issue.
+
+Here are the fields of interest:
+
+```{r filenames_in_zip_files}
+wide_df %>% filter(archive_content == "name_is_genome_mumble_txt" | archive_content == "other_name") %>% select(member_name)
+```
+
