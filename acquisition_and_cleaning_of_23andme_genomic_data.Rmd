@@ -1,7 +1,7 @@
 ---
 title: "Acquisition and Cleaning of 23andMe Genomic Data"
 author: "Philip Chase"
-date: "3/29/2017"
+date: "3/30/2017"
 output: html_document
 ---
 
@@ -53,8 +53,7 @@ Processed log data looks like
 summary(wide_df)
 ```
 
-I'm working on the outline to this document at https://docs.google.com/document/d/1Y2vzSo_cbuu22CYgn919ksKFWHEGim1O42pc43W6yYo/edit#
-I'm using this to guide what stats and visuals I provide form the log data.
+I'm working on the outline to this document as part of [Outline of Group Project 3 Project Paper](https://docs.google.com/document/d/1yyQNMSXvNO_EFxaZl1pPCkoIEJf1ja5e-yg0gSh-4wU/edit#heading=h.p3laqvz708uz) 
 
 ## Bar charts to make
 
@@ -73,9 +72,15 @@ We need a way to characterize the file naming patterns in the zip fiels for the 
 
 We will also need to review the data collection policies of the study to see if they were aware of this issue.
 
-Here are the fields of interest:
+Here are the fields of interest with the "genome*" naming pattern:
 
-```{r filenames_in_zip_files}
-wide_df %>% filter(archive_content == "name_is_genome_mumble_txt" | archive_content == "other_name") %>% select(member_name)
+```{r filename_in_zip_file_is_genome_mumble}
+wide_df %>% filter(archive_content == "name_is_genome_mumble_txt") %>% select(member_name)
+```
+
+Here are the fields of interest with other naming patterns:
+
+```{r filename_in_zip_file_is_other}
+wide_df %>% filter(archive_content == "other_name") %>% select(member_name)
 ```
 
