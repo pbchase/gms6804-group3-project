@@ -11,8 +11,14 @@ clean:
 clean_vcf:
 	rm 23andmedata/vcf/*
 
-convert:
+convert_download_to_text:
 	./make-file-types-consistent.py
+
+convert_text_to_indexed_vcf:
+	./convert_23andme_to_vcf.py
+
+combine_conversion_logs:
+	cat conversion_log.csv conversion_log_to_indexed_vcf.csv > combined_conversion_log.csv
 
 query_text_files_for_rs4149056:
 	echo "subject	rsid	chromosome	position	genotype" >rs4149056_v2.txt
