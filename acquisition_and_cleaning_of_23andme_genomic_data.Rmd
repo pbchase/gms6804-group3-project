@@ -70,9 +70,32 @@ ggplot(file_type, aes(combined_file_type)) + geom_bar() + theme(axis.text.x = el
 
 ```
 
+```{r combined_file_type_of_member}
+file_type$combined_file_type_of_member <- reorder(wide_df$combined_file_type_of_member, wide_df$combined_file_type_of_member, function(x) -length(x))
+ggplot(file_type, aes(combined_file_type_of_member)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r text_file_subtype}
+file_type$text_file_subtype <- reorder(wide_df$text_file_subtype, wide_df$text_file_subtype, function(x) -length(x))
+ggplot(file_type, aes(text_file_subtype)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r archive_content}
+content <- wide_df %>% select(archive_content) %>% na.omit()
+content$archive_content <- reorder(content$archive_content, content$archive_content, function(x) -length(x))
+ggplot(content, aes(archive_content)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
 ## histograms to make
 
 * archive_member_count - could be very boring, but we should generate it to find out
+
+```{r archive_member_count}
+content <- wide_df %>% select(archive_member_count) %>% na.omit()
+ggplot(content, aes(archive_member_count)) + geom_bar()
+```
 
 ## subject identifiers in file names of .zip files
 
