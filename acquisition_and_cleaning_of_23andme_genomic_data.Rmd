@@ -15,6 +15,7 @@ setwd('/Users/pbchase/classes/gms6804-group3-project')
 df <- read.csv('combined_conversion_log.csv', stringsAsFactors=FALSE)
 library(tidyr)
 library(dplyr)
+library(ggplot2)
 wide_df <- df %>% spread(attribute, value)
 str(wide_df)
 summary(wide_df)
@@ -61,6 +62,13 @@ I'm working on the outline to this document as part of [Outline of Group Project
 * combined_file_type_of_member - aggregated file types after extracting good content from archives
 * text_file_subtype - categorization of the text files after extracting good content from archives
 * archive_content - categorization of archive content
+
+```{r combined_file_type}
+file_type <- wide_df %>% select(combined_file_type)
+file_type$combined_file_type <- reorder(wide_df$combined_file_type, wide_df$combined_file_type, function(x) -length(x))
+ggplot(file_type, aes(combined_file_type)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
 
 ## histograms to make
 
