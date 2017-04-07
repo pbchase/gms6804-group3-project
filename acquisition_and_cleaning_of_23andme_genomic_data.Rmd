@@ -75,18 +75,23 @@ count(wide_df, combined_file_type) %>% arrange(desc(n)) %>% mutate(Percent = rou
 file_type$combined_file_type_of_member <- reorder(wide_df$combined_file_type_of_member, wide_df$combined_file_type_of_member, function(x) -length(x))
 ggplot(file_type, aes(combined_file_type_of_member)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+count(wide_df, combined_file_type_of_member) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
 ```
 
 ```{r text_file_subtype}
 file_type$text_file_subtype <- reorder(wide_df$text_file_subtype, wide_df$text_file_subtype, function(x) -length(x))
 ggplot(file_type, aes(text_file_subtype)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+count(wide_df, text_file_subtype) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
 ```
 
 ```{r archive_content}
 content <- wide_df %>% select(archive_content) %>% na.omit()
 content$archive_content <- reorder(content$archive_content, content$archive_content, function(x) -length(x))
 ggplot(content, aes(archive_content)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+count(wide_df, archive_content) %>% na.omit() %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+
 ```
 
 ## histograms to make
@@ -96,6 +101,8 @@ ggplot(content, aes(archive_content)) + geom_bar() + theme(axis.text.x = element
 ```{r archive_member_count}
 content <- wide_df %>% select(archive_member_count) %>% na.omit()
 ggplot(content, aes(archive_member_count)) + geom_bar()
+
+count(wide_df, archive_member_count) %>% na.omit() %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
 ```
 
 ## subject identifiers in file names of .zip files
