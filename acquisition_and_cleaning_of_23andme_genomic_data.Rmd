@@ -66,8 +66,9 @@ I'm working on the outline to this document as part of [Outline of Group Project
 ```{r combined_file_type}
 file_type <- wide_df %>% select(combined_file_type)
 file_type$combined_file_type <- reorder(wide_df$combined_file_type, wide_df$combined_file_type, function(x) -length(x))
-ggplot(file_type, aes(combined_file_type)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(file_type, aes(combined_file_type)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab("Frequency of file type") + xlab("File types in initial download of 23andMe genomic data")
 
+count(wide_df, combined_file_type) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
 ```
 
 ```{r combined_file_type_of_member}
