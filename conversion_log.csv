@@ -101,6 +101,13 @@ hu0369A1,member_name,genome_Tyler_Holmes_Full_20120308210826.txt
 hu0369A1,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 hu0369A1,member_type,text
 hu0369A1,text_file_subtype,23andMe
+hu0471B4,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
+hu0471B4,download_type,archive
+hu0471B4,archive_member_count,3
+hu0471B4,archive_content,unsure_what_to_do_with_content
+hu0471B4,member_type_from_magic_number,empty
+hu0471B4,member_type,text
+hu0471B4,text_file_subtype,empty
 hu0486D6,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 hu0486D6,download_type,archive
 hu0486D6,archive_member_count,1
@@ -218,6 +225,11 @@ hu0C1563,member_name,genome_hu0C1563_Full_20131207183118.txt
 hu0C1563,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 hu0C1563,member_type,text
 hu0C1563,text_file_subtype,23andMe
+hu0C8573,actual_file_type_from_magic_number,"ASCII text, with CRLF line terminators"
+hu0C8573,download_type,text
+hu0C8573,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
+hu0C8573,member_type,text
+hu0C8573,text_file_subtype,unknown
 hu0D2DBE,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 hu0D2DBE,download_type,archive
 hu0D2DBE,archive_member_count,1
@@ -453,7 +465,7 @@ hu1C542B,download_type,archive
 hu1C542B,archive_content,archive_is_bad
 hu1C542B,member_type_from_magic_number,empty
 hu1C542B,member_type,text
-hu1C542B,text_file_subtype,unknown
+hu1C542B,text_file_subtype,empty
 hu1D6DF3,actual_file_type_from_magic_number,"ASCII text, with CRLF line terminators"
 hu1D6DF3,download_type,text
 hu1D6DF3,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
@@ -528,6 +540,13 @@ hu24A473,download_type,text
 hu24A473,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 hu24A473,member_type,text
 hu24A473,text_file_subtype,23andMe
+hu250634,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
+hu250634,download_type,archive
+hu250634,archive_member_count,3
+hu250634,archive_content,unsure_what_to_do_with_content
+hu250634,member_type_from_magic_number,empty
+hu250634,member_type,text
+hu250634,text_file_subtype,empty
 hu25BD97,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 hu25BD97,download_type,archive
 hu25BD97,archive_member_count,1
@@ -986,6 +1005,9 @@ hu3E2659,download_type,text
 hu3E2659,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 hu3E2659,member_type,text
 hu3E2659,text_file_subtype,23andMe
+hu3E9D3B,actual_file_type_from_magic_number,"bzip2 compressed data, block size = 900k"
+hu3E9D3B,download_type,other
+hu3E9D3B,member_type_from_magic_number,"bzip2 compressed data, block size = 900k"
 hu3EEE3A,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 hu3EEE3A,download_type,archive
 hu3EEE3A,archive_member_count,1
@@ -1126,6 +1148,9 @@ hu44DCFF,member_name,JKP001_genotypes.txt
 hu44DCFF,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 hu44DCFF,member_type,text
 hu44DCFF,text_file_subtype,23andMe
+hu450107,actual_file_type_from_magic_number,"bzip2 compressed data, block size = 900k"
+hu450107,download_type,other
+hu450107,member_type_from_magic_number,"bzip2 compressed data, block size = 900k"
 hu459AD0,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 hu459AD0,download_type,archive
 hu459AD0,archive_member_count,1
@@ -2010,7 +2035,7 @@ hu734BD6,archive_member_count,2
 hu734BD6,archive_content,unsure_what_to_do_with_content
 hu734BD6,member_type_from_magic_number,empty
 hu734BD6,member_type,text
-hu734BD6,text_file_subtype,unknown
+hu734BD6,text_file_subtype,empty
 hu7379BC,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 hu7379BC,download_type,archive
 hu7379BC,archive_member_count,1
@@ -2417,7 +2442,7 @@ hu87223B,archive_member_count,90
 hu87223B,archive_content,unsure_what_to_do_with_content
 hu87223B,member_type_from_magic_number,empty
 hu87223B,member_type,text
-hu87223B,text_file_subtype,unknown
+hu87223B,text_file_subtype,empty
 hu87943E,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 hu87943E,download_type,archive
 hu87943E,archive_member_count,1
@@ -2706,7 +2731,7 @@ hu979849,archive_member_count,9
 hu979849,archive_content,unsure_what_to_do_with_content
 hu979849,member_type_from_magic_number,empty
 hu979849,member_type,text
-hu979849,text_file_subtype,unknown
+hu979849,text_file_subtype,empty
 hu97DB4A,actual_file_type_from_magic_number,"ASCII text, with CRLF line terminators"
 hu97DB4A,download_type,text
 hu97DB4A,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
@@ -3384,7 +3409,7 @@ huBE28C7,archive_member_count,4
 huBE28C7,archive_content,unsure_what_to_do_with_content
 huBE28C7,member_type_from_magic_number,empty
 huBE28C7,member_type,text
-huBE28C7,text_file_subtype,unknown
+huBE28C7,text_file_subtype,empty
 huBE3694,actual_file_type_from_magic_number,"ASCII text, with CRLF line terminators"
 huBE3694,download_type,text
 huBE3694,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
@@ -3598,6 +3623,11 @@ huCCAFD0,download_type,text
 huCCAFD0,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 huCCAFD0,member_type,text
 huCCAFD0,text_file_subtype,23andMe
+huCDD5EE,actual_file_type_from_magic_number,"ASCII text, with CRLF line terminators"
+huCDD5EE,download_type,text
+huCDD5EE,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
+huCDD5EE,member_type,text
+huCDD5EE,text_file_subtype,unknown
 huCE80FB,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 huCE80FB,download_type,archive
 huCE80FB,archive_member_count,1
@@ -3860,6 +3890,11 @@ huD9D625,member_name,genome_Christopher_Henry_Full_20100419182314.txt
 huD9D625,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 huD9D625,member_type,text
 huD9D625,text_file_subtype,23andMe
+huDA2C2D,actual_file_type_from_magic_number,"ASCII text, with CRLF line terminators"
+huDA2C2D,download_type,text
+huDA2C2D,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
+huDA2C2D,member_type,text
+huDA2C2D,text_file_subtype,unknown
 huDB045C,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 huDB045C,download_type,archive
 huDB045C,archive_member_count,1
@@ -4148,6 +4183,13 @@ huE8E021,download_type,text
 huE8E021,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 huE8E021,member_type,text
 huE8E021,text_file_subtype,23andMe
+huE9B698,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
+huE9B698,download_type,archive
+huE9B698,archive_member_count,3
+huE9B698,archive_content,unsure_what_to_do_with_content
+huE9B698,member_type_from_magic_number,empty
+huE9B698,member_type,text
+huE9B698,text_file_subtype,empty
 huE9E383,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 huE9E383,download_type,archive
 huE9E383,archive_member_count,1
@@ -4373,6 +4415,14 @@ huF99A55,member_name,genome_WJR_v4_Full_20160503200137.txt
 huF99A55,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 huF99A55,member_type,text
 huF99A55,text_file_subtype,23andMe
+huF9A043,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
+huF9A043,download_type,archive
+huF9A043,archive_member_count,1
+huF9A043,archive_content,name_is_genome_mumble_txt
+huF9A043,member_name,genome_Carol_Lamb_Mito_20140306123930.txt
+huF9A043,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
+huF9A043,member_type,text
+huF9A043,text_file_subtype,unknown
 huF9E138,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
 huF9E138,download_type,archive
 huF9E138,archive_member_count,1
@@ -4436,6 +4486,13 @@ huFE018E,download_type,text
 huFE018E,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 huFE018E,member_type,text
 huFE018E,text_file_subtype,23andMe
+huFE1569,actual_file_type_from_magic_number,"Zip archive data, at least v2.0 to extract"
+huFE1569,download_type,archive
+huFE1569,archive_member_count,3
+huFE1569,archive_content,unsure_what_to_do_with_content
+huFE1569,member_type_from_magic_number,empty
+huFE1569,member_type,text
+huFE1569,text_file_subtype,empty
 huFE71F3,actual_file_type_from_magic_number,"ASCII text, with CRLF line terminators"
 huFE71F3,download_type,text
 huFE71F3,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
@@ -4473,3 +4530,6 @@ huFFAD87,member_name,genome_Juhan_Sonin_Full_20110524082809.txt
 huFFAD87,member_type_from_magic_number,"ASCII text, with CRLF line terminators"
 huFFAD87,member_type,text
 huFFAD87,text_file_subtype,23andMe
+new,actual_file_type_from_magic_number,ASCII text
+new,download_type,other
+new,member_type_from_magic_number,ASCII text
