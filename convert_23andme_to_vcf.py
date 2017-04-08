@@ -2,6 +2,7 @@
 
 import os
 import re
+import csv
 
 class Log:
     def __init__(self, output_file=''):
