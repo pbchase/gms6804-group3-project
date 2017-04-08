@@ -79,10 +79,11 @@ count(wide_df, combined_file_type_of_member) %>% arrange(desc(n)) %>% mutate(Per
 ```
 
 ```{r text_file_subtype}
-file_type$text_file_subtype <- reorder(wide_df$text_file_subtype, wide_df$text_file_subtype, function(x) -length(x))
-ggplot(file_type, aes(text_file_subtype)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+text_file_subtype <- reorder(wide_df$text_file_subtype, wide_df$text_file_subtype, function(x) -length(x)) %>% na.omit()
+text_files <- data.frame(text_file_subtype)
+ggplot(text_files, aes(text_file_subtype)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab("Frequency of file type") + xlab("Text file sub-types of genomic data")
 
-count(wide_df, text_file_subtype) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+count(wide_df, text_file_subtype)  %>% na.omit() %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
 ```
 
 ```{r archive_content}
