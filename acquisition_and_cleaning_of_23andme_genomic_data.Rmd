@@ -73,7 +73,7 @@ count(wide_df, combined_file_type) %>% arrange(desc(n)) %>% mutate(Percent = rou
 
 ```{r combined_file_type_of_member}
 file_type$combined_file_type_of_member <- reorder(wide_df$combined_file_type_of_member, wide_df$combined_file_type_of_member, function(x) -length(x))
-ggplot(file_type, aes(combined_file_type_of_member)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(file_type, aes(combined_file_type_of_member)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab("Frequency of file type") + xlab("File types after unarchiving of 23andMe genomic data")
 
 count(wide_df, combined_file_type_of_member) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
 ```

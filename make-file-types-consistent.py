@@ -123,6 +123,17 @@ def is_vcf_file(input_file):
     return(search_file_for_header(input_file, header_line='##fileformat=VCFv'))
 
 
+def is_empty_file(input_file):
+    """
+    Identify empty input_file
+    """
+    statinfo = os.stat(input_file)
+    if statinfo.st_size == 0:
+        return True
+    else:
+        return False
+
+
 def search_file_for_header(input_file, header_line):
     with open(input_file, 'r') as inF:
         for line in inF:
@@ -165,6 +176,9 @@ def sort_text_file_by_subtype(input_file, input_file_path, txt_dir, vcf_dir, adn
     elif is_vcf_file(input_file_path):
         print copy_ascii_to_output(input_file, input_file_path, vcf_dir)
         mylog.log([input_file, "text_file_subtype", "vcf"])
+    elif is_empty_file(input_file_path):
+        print copy_ascii_to_output(input_file, input_file_path, uk_dir)
+        mylog.log([input_file, "text_file_subtype", "empty"])
     else:
         print copy_ascii_to_output(input_file, input_file_path, uk_dir)
         mylog.log([input_file, "text_file_subtype", "unknown"])
