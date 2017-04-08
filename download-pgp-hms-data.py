@@ -74,3 +74,5 @@ urls, file_names = extract_23andme_data(soup, website_root)
 print "Subject count: " + str(len(urls))
 limit = 705  # only download this many files
 download_files(urls, download_directory, file_names, limit)
+# for filename in urls.keys():
+#     print "%s,download_name,%s" % (filename, urls[filename])
