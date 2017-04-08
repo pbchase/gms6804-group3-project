@@ -95,6 +95,20 @@ count(wide_df, archive_content) %>% na.omit() %>% arrange(desc(n)) %>% mutate(Pe
 
 ```
 
+## What portion of the downloaded files were usable 23andMe files after processing?
+
+```{r what_portion_of_observations_were_usable}
+count(wide_df, indexed_vcf_available) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+
+```
+
+
+## How many files were ready to use when downloaded?
+
+```{r how_many_ready_to_use_text_files}
+wide_df %>% filter(combined_file_type == "ASCII text") %>% filter(indexed_vcf_available == "True") %>% count()
+```
+
 ## histograms to make
 
 * archive_member_count - could be very boring, but we should generate it to find out
