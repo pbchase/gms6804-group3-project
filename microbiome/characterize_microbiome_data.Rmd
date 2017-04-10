@@ -1,0 +1,49 @@
+---
+title: "HMS PGP Microbiome data"
+author: "Philip Chase"
+date: "4/8/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 
+
+```{r get_public_genetic_data}
+
+library(tidyr)
+library(tibble)
+library(jsonlite)
+
+# Download data file
+microbiome = '/Users/pbchase/classes/gms6804-group3-project/microbiome'
+setwd(microbiome)
+dataURL <- "https://my.pgp-hms.org/public_genetic_data.json"
+dataFile <- "public_genetic_data.json"
+
+if (!file.exists(dataFile)){
+    print("Downloading data file")
+    download.file(dataURL, dataFile, "curl", quiet=TRUE)
+}
+
+json_data <- fromJSON(readLines(dataFile))
+genomic_data <- json_data[[3]]
+microbiome_in_url <- genomic_data %>% filter(grepl("icrobiome",download_url)) %>% select(name, download_url) %>% mutate(clean_name = tolower(gsub("#","", gsub('"', '', gsub(" ", "_", name)))))
+
+# download all files
+microbiome_raw = '/Users/pbchase/classes/gms6804-group3-project/microbiome/raw'
+setwd(microbiome_raw)
+
+Map(function(u, d) download.file(u, d, mode="wb"), microbiome_in_url$download_url, microbiome_in_url$clean_name)
+
+microbiome_in_datatype <- genomic_data %>% filter(grepl("Microbiome",data_type)) %>% select(name, download_url) %>% mutate(clean_name = tolower(gsub("#","", gsub('"', '', gsub(" ", "_", name)))))
+
+microbiome_raw = '/Users/pbchase/classes/gms6804-group3-project/microbiome/raw'
+setwd(microbiome_raw)
+
+Map(function(u, d) download.file(u, d, mode="wb"), microbiome_in_datatype$download_url, microbiome_in_datatype$clean_name)
+
+```
+

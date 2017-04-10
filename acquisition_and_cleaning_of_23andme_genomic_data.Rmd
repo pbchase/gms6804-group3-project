@@ -1,0 +1,214 @@
+---
+title: "Acquisition and Cleaning of 23andMe Genomic Data"
+author: "Philip Chase"
+date: "4/9/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r read_data, echo=FALSE, results="hide", message=FALSE}
+setwd('/Users/pbchase/classes/gms6804-group3-project')
+
+df <- read.csv('combined_conversion_log.csv', stringsAsFactors=FALSE)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+wide_df <- df %>% spread(attribute, value)
+str(wide_df)
+summary(wide_df)
+
+# aggregate similar magic number strings to reduce number of factors
+combine_magic_numbers <- function(x) {
+  x <- gsub("^(ascii text).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(ISO-8859 text).*", "ASCII text", x, ignore.case=TRUE)
+  x <- gsub("^(Variant Call Format).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(Composite Document File V2).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(jpeg).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(html).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(SAMtools BAI).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(bzip2).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(gzip).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(pdf).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(SQLite 3.x database).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(zip).*", "\\1", x, ignore.case=TRUE)
+}
+
+wide_df$combined_file_type <- combine_magic_numbers(wide_df$actual_file_type_from_magic_number)
+wide_df$combined_file_type_of_member <- combine_magic_numbers(wide_df$member_type_from_magic_number)
+
+# fix column classes
+wide_df$archive_member_count <- as.integer(wide_df$archive_member_count)
+wide_df <- wide_df %>% mutate_if(is.character,as.factor)
+wide_df$subject <- as.character(wide_df$subject)
+wide_df$member_name <- as.character(wide_df$member_name)
+```
+
+## Overview
+
+Processed log data looks like 
+
+```{r summarize_wide_df}
+summary(wide_df)
+```
+
+I'm working on the outline to this document as part of [Outline of Group Project 3 Project Paper](https://docs.google.com/document/d/1yyQNMSXvNO_EFxaZl1pPCkoIEJf1ja5e-yg0gSh-4wU/edit#heading=h.p3laqvz708uz) 
+
+## Bar charts to make
+
+* combined_file_type - aggregated file types of actual downloads
+* combined_file_type_of_member - aggregated file types after extracting good content from archives
+* text_file_subtype - categorization of the text files after extracting good content from archives
+* archive_content - categorization of archive content
+
+```{r combined_file_type}
+file_type <- wide_df %>% select(combined_file_type)
+file_type$combined_file_type <- reorder(wide_df$combined_file_type, wide_df$combined_file_type, function(x) -length(x))
+ggplot(file_type, aes(combined_file_type)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab("Frequency of file type") + xlab("File types in initial download of 23andMe genomic data")
+
+count(wide_df, combined_file_type) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+```
+
+```{r combined_file_type_of_member}
+file_type$combined_file_type_of_member <- reorder(wide_df$combined_file_type_of_member, wide_df$combined_file_type_of_member, function(x) -length(x))
+ggplot(file_type, aes(combined_file_type_of_member)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab("Frequency of file type") + xlab("File types after unarchiving of 23andMe genomic data")
+
+count(wide_df, combined_file_type_of_member) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+```
+
+```{r text_file_subtype}
+text_file_subtype <- reorder(wide_df$text_file_subtype, wide_df$text_file_subtype, function(x) -length(x)) %>% na.omit()
+text_files <- data.frame(text_file_subtype)
+ggplot(text_files, aes(text_file_subtype)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab("Frequency of file type") + xlab("Text file sub-types of genomic data")
+
+count(wide_df, text_file_subtype)  %>% na.omit() %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+```
+
+```{r archive_content}
+content <- wide_df %>% select(archive_content) %>% na.omit()
+content$archive_content <- reorder(content$archive_content, content$archive_content, function(x) -length(x))
+ggplot(content, aes(archive_content)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+count(wide_df, archive_content) %>% na.omit() %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+
+```
+
+## What portion of the downloaded files were usable 23andMe files after processing?
+
+```{r what_portion_of_observations_were_usable}
+count(wide_df, indexed_vcf_available) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+
+```
+
+
+## How many files were ready to use when downloaded?
+
+```{r how_many_ready_to_use_text_files}
+wide_df %>% filter(combined_file_type == "ASCII text") %>% filter(indexed_vcf_available == "True") %>% count()
+```
+
+## histograms to make
+
+* archive_member_count - could be very boring, but we should generate it to find out
+
+```{r archive_member_count}
+content <- wide_df %>% select(archive_member_count) %>% na.omit()
+ggplot(content, aes(archive_member_count)) + geom_bar()
+
+count(wide_df, archive_member_count) %>% na.omit() %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+```
+
+## subject identifiers in file names of .zip files
+
+We need a way to characterize the file naming patterns in the zip fiels for the subjects described by `archive_content == "name_is_genome_mumble_txt" | archive_content == "other_name"`. This could get into a discussion about identifiers and the risk of incidental exposure of identifiers in self-reported data.  
+
+We will also need to review the data collection policies of the study to see if they were aware of this issue.
+
+Here are the fields of interest with the "genome*" naming pattern:
+
+```{r filename_in_zip_file_is_genome_mumble}
+wide_df %>% filter(archive_content == "name_is_genome_mumble_txt") %>% select(member_name) %>% tail()
+```
+
+To summarize the identifiers issue:
+
+extract the name portion from the zip file member name
+
+
+
+```{r }
+# extract the name portion from the zip file member name
+member_names <- wide_df %>% filter(archive_content == "name_is_genome_mumble_txt") %>% select(member_name) %>% head()
+
+# remove the prefix and suffix form the name
+trimmed_names <- gsub("_?_full_[0-9]+.txt", "", gsub("genome_", "", member_names$member_name, ignore.case=TRUE), ignore.case=TRUE)
+
+# split the full names into name components
+split_names <- strsplit(tolower(trimmed_names), "_")
+
+# build a vector of surnames, given_names, initials, and suffixes
+given_names <- c("marty", "Jen", "Emma")
+surnames <- c("williams", "Anderson", "southwell")
+suffixes <- c("Jr", "Sr", "I", "II", "III", "IV")
+census_names <- tolower(c(given_names, surnames, suffixes, letters))
+
+diffed_names <- lapply(split_names,  function(x) setdiff(x, y=census_names))
+
+qty_of_unmatched_name_components <- sapply(diffed_names, length)
+
+x<- c("genome_Juhan_Sonin_Full_20110524082809.txt", "genome_Andrew_Beeler_Full_20160320135452.txt")
+```
+
+Complete US census bureau data for given names through 2015 is available at https://www.ssa.gov/oact/babynames/names.zip
+
+The top 1000 surnames from the 2010 census are available at https://www2.census.gov/topics/genealogy/2010surnames/Names_2010Census_Top1000.xlsx
+
+```{r get_census_data}
+# Download data file
+given_name_scratch = '/Users/pbchase/classes/gms6804-group3-project/temp'
+setwd(given_name_scratch)
+dataURL <- "https://www.ssa.gov/oact/babynames/names.zip"
+dataFile <- "names.zip"
+
+if (!file.exists(dataFile)){
+    print("Downloading data file")
+    download.file(dataURL, dataFile, "curl", quiet=TRUE)
+    # Extract the contents of the compressed file
+    unzip(dataFile)
+}
+
+library(data.table)  
+files <- list.files(path = given_name_scratch,pattern = ".txt")
+temp <- lapply(files, fread, sep=",")
+given_names_raw <- rbindlist(temp)
+given_names <- tolower(unique(given_names_raw$V1))
+
+# get surnames
+given_name_scratch = '/Users/pbchase/classes/gms6804-group3-project/temp'
+setwd(given_name_scratch)
+dataURL <- "https://www2.census.gov/topics/genealogy/2010surnames/Names_2010Census_Top1000.xlsx"
+dataFile <- "Names_2010Census_Top1000.xlsx"
+
+if (!file.exists(dataFile)){
+    print("Downloading data file")
+    download.file(dataURL, dataFile, "curl", quiet=TRUE)
+}
+
+# library(xlsx)
+
+# surnames_raw <- read.xlsx(dataFile, sheetName="2010_Top1000", start_row=4, start_column=1)
+
+
+
+```
+
+
+
+Here are the fields of interest with other naming patterns:
+
+```{r filename_in_zip_file_is_other}
+wide_df %>% filter(archive_content == "other_name") %>% select(member_name)
+```
+
