@@ -1,7 +1,7 @@
 ---
 title: "Acquisition and Cleaning of 23andMe Genomic Data"
 author: "Philip Chase"
-date: "4/9/2017"
+date: "4/13/2017"
 output: html_document
 ---
 
@@ -53,8 +53,6 @@ Processed log data looks like
 ```{r summarize_wide_df}
 summary(wide_df)
 ```
-
-I'm working on the outline to this document as part of [Outline of Group Project 3 Project Paper](https://docs.google.com/document/d/1yyQNMSXvNO_EFxaZl1pPCkoIEJf1ja5e-yg0gSh-4wU/edit#heading=h.p3laqvz708uz) 
 
 ## Bar charts to make
 
@@ -119,96 +117,3 @@ ggplot(content, aes(archive_member_count)) + geom_bar()
 
 count(wide_df, archive_member_count) %>% na.omit() %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
 ```
-
-## subject identifiers in file names of .zip files
-
-We need a way to characterize the file naming patterns in the zip fiels for the subjects described by `archive_content == "name_is_genome_mumble_txt" | archive_content == "other_name"`. This could get into a discussion about identifiers and the risk of incidental exposure of identifiers in self-reported data.  
-
-We will also need to review the data collection policies of the study to see if they were aware of this issue.
-
-Here are the fields of interest with the "genome*" naming pattern:
-
-```{r filename_in_zip_file_is_genome_mumble}
-wide_df %>% filter(archive_content == "name_is_genome_mumble_txt") %>% select(member_name) %>% tail()
-```
-
-To summarize the identifiers issue:
-
-extract the name portion from the zip file member name
-
-
-
-```{r }
-# extract the name portion from the zip file member name
-member_names <- wide_df %>% filter(archive_content == "name_is_genome_mumble_txt") %>% select(member_name) %>% head()
-
-# remove the prefix and suffix form the name
-trimmed_names <- gsub("_?_full_[0-9]+.txt", "", gsub("genome_", "", member_names$member_name, ignore.case=TRUE), ignore.case=TRUE)
-
-# split the full names into name components
-split_names <- strsplit(tolower(trimmed_names), "_")
-
-# build a vector of surnames, given_names, initials, and suffixes
-given_names <- c("marty", "Jen", "Emma")
-surnames <- c("williams", "Anderson", "southwell")
-suffixes <- c("Jr", "Sr", "I", "II", "III", "IV")
-census_names <- tolower(c(given_names, surnames, suffixes, letters))
-
-diffed_names <- lapply(split_names,  function(x) setdiff(x, y=census_names))
-
-qty_of_unmatched_name_components <- sapply(diffed_names, length)
-
-x<- c("genome_Juhan_Sonin_Full_20110524082809.txt", "genome_Andrew_Beeler_Full_20160320135452.txt")
-```
-
-Complete US census bureau data for given names through 2015 is available at https://www.ssa.gov/oact/babynames/names.zip
-
-The top 1000 surnames from the 2010 census are available at https://www2.census.gov/topics/genealogy/2010surnames/Names_2010Census_Top1000.xlsx
-
-```{r get_census_data}
-# Download data file
-given_name_scratch = '/Users/pbchase/classes/gms6804-group3-project/temp'
-setwd(given_name_scratch)
-dataURL <- "https://www.ssa.gov/oact/babynames/names.zip"
-dataFile <- "names.zip"
-
-if (!file.exists(dataFile)){
-    print("Downloading data file")
-    download.file(dataURL, dataFile, "curl", quiet=TRUE)
-    # Extract the contents of the compressed file
-    unzip(dataFile)
-}
-
-library(data.table)  
-files <- list.files(path = given_name_scratch,pattern = ".txt")
-temp <- lapply(files, fread, sep=",")
-given_names_raw <- rbindlist(temp)
-given_names <- tolower(unique(given_names_raw$V1))
-
-# get surnames
-given_name_scratch = '/Users/pbchase/classes/gms6804-group3-project/temp'
-setwd(given_name_scratch)
-dataURL <- "https://www2.census.gov/topics/genealogy/2010surnames/Names_2010Census_Top1000.xlsx"
-dataFile <- "Names_2010Census_Top1000.xlsx"
-
-if (!file.exists(dataFile)){
-    print("Downloading data file")
-    download.file(dataURL, dataFile, "curl", quiet=TRUE)
-}
-
-# library(xlsx)
-
-# surnames_raw <- read.xlsx(dataFile, sheetName="2010_Top1000", start_row=4, start_column=1)
-
-
-
-```
-
-
-
-Here are the fields of interest with other naming patterns:
-
-```{r filename_in_zip_file_is_other}
-wide_df %>% filter(archive_content == "other_name") %>% select(member_name)
-```
-
