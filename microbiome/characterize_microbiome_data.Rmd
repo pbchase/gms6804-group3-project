@@ -29,21 +29,25 @@ if (!file.exists(dataFile)){
 }
 
 json_data <- fromJSON(readLines(dataFile))
-genomic_data <- json_data[[3]]
-microbiome_in_url <- genomic_data %>% filter(grepl("icrobiome",download_url)) %>% select(name, download_url) %>% mutate(clean_name = tolower(gsub("#","", gsub('"', '', gsub(" ", "_", name)))))
+genomic_data <- json_data[["aaData"]]
 
-# download all files
-microbiome_raw = '/Users/pbchase/classes/gms6804-group3-project/microbiome/raw'
-setwd(microbiome_raw)
+microbiome_in_values <- genomic_data %>% filter(grepl("Microbiome",data_type) | grepl("Microbiome",download_url) | grepl("Microbiome",name) | grepl("Microbiome",description))  %>% mutate(clean_name = tolower(gsub("#","", gsub('"', '', gsub(" ", "_", name)))))
 
-Map(function(u, d) download.file(u, d, mode="wb"), microbiome_in_url$download_url, microbiome_in_url$clean_name)
+count(microbiome_in_values, download_url) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
+summary(microbiome_in_values %>% filter(is.na(download_url)))
 
-microbiome_in_datatype <- genomic_data %>% filter(grepl("Microbiome",data_type)) %>% select(name, download_url) %>% mutate(clean_name = tolower(gsub("#","", gsub('"', '', gsub(" ", "_", name)))))
+microbiome_with_download_url <- microbiome_in_values %>% filter(!is.na(download_url)) %>% select(name,data_type) 
 
-microbiome_raw = '/Users/pbchase/classes/gms6804-group3-project/microbiome/raw'
-setwd(microbiome_raw)
+combine_names <- function(x) {
+  x <- gsub("^(Microbiome report for PGP kit).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(Microbiome .American Gut.).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("Microbiome data for PGP kit.*(fna.gz).*", "Microbiome data for PGP kit - fna.gz", x, ignore.case=TRUE)
+  x <- gsub("Microbiome data for PGP kit.*(txt).*", "Microbiome data for PGP kit - txt", x, ignore.case=TRUE)
+  x <- gsub("^(American Gut).*", "\\1", x, ignore.case=TRUE)
+  x <- gsub("^(uBiome).*", "uBiome", x, ignore.case=TRUE)
+}
 
-Map(function(u, d) download.file(u, d, mode="wb"), microbiome_in_datatype$download_url, microbiome_in_datatype$clean_name)
-
+microbiome_with_download_url$file_type <- combine_names(microbiome_with_download_url$name)
+count(microbiome_with_download_url, file_type) %>% arrange(desc(n)) %>% mutate(Percent = round(n / sum(n),3))
 ```
 
