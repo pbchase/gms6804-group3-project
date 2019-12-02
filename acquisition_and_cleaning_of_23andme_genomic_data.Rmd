@@ -10,7 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r read_data, echo=FALSE, results="hide", message=FALSE}
-setwd('/Users/pbchase/classes/gms6804-group3-project')
 
 df <- read.csv('combined_conversion_log.csv', stringsAsFactors=FALSE)
 library(tidyr)
