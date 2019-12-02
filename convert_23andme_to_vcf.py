@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/local/bin/python3
 
 import os
 import re
@@ -21,10 +21,12 @@ def run_vcf_step(base_name_of_file, command):
     if exit_status > 0:
         mylog.log([base_name_of_file, "indexed_vcf_available", "False"])
         return (exit_status)
+    else:
+        return (0)
 
 
 def convert_23andme_to_vcf(filename, input_dir, output_dir):
-    print ' '.join([filename, input_dir, output_dir])
+    print(' '.join([filename, input_dir, output_dir]))
     input_file = os.path.join(input_dir, filename)
     base_name_of_file = re.match('(.*).txt', filename).group(1)
     name_of_vcf_file = os.path.join(output_dir, base_name_of_file + ".vcf")

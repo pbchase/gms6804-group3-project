@@ -8,7 +8,7 @@ import os
 import re
 import shutil
 import gzip
-from StringIO import StringIO
+from io import StringIO
 import csv
 
 
@@ -168,19 +168,19 @@ def extract_gzip_to_txt(input_file, path_to_input_file, path_to_output_file, out
 def sort_text_file_by_subtype(input_file, input_file_path, txt_dir, vcf_dir, adna_dir, uk_dir):
     mylog.log([input_file, "member_type", "text"])
     if is_adna_file(input_file_path):
-        print copy_ascii_to_output(input_file, input_file_path, adna_dir)
+        print(copy_ascii_to_output(input_file, input_file_path, adna_dir))
         mylog.log([input_file, "text_file_subtype", "AncestryDNA"])
     elif is_23andme_file(input_file_path):
-        print copy_ascii_to_output(input_file, input_file_path, txt_dir)
+        print(copy_ascii_to_output(input_file, input_file_path, txt_dir))
         mylog.log([input_file, "text_file_subtype", "23andMe"])
     elif is_vcf_file(input_file_path):
-        print copy_ascii_to_output(input_file, input_file_path, vcf_dir)
+        print(copy_ascii_to_output(input_file, input_file_path, vcf_dir))
         mylog.log([input_file, "text_file_subtype", "vcf"])
     elif is_empty_file(input_file_path):
-        print copy_ascii_to_output(input_file, input_file_path, uk_dir)
+        print(copy_ascii_to_output(input_file, input_file_path, uk_dir))
         mylog.log([input_file, "text_file_subtype", "empty"])
     else:
-        print copy_ascii_to_output(input_file, input_file_path, uk_dir)
+        print(copy_ascii_to_output(input_file, input_file_path, uk_dir))
         mylog.log([input_file, "text_file_subtype", "unknown"])
 
 
@@ -206,10 +206,10 @@ def convert_raw_input_to_txt_or_vcf(input_dir, txt_dir, vcf_dir, adna_dir, uk_di
         if input_needs_processing(input_file_path, output_file_path, vcf_file_path, adna_file_path, uk_file_path):
             file_format = magic.from_file(input_file_path)
             mylog.log([input_file, "actual_file_type_from_magic_number", file_format])
-            print "Processing %s" % input_file_path ,
+            print("Processing %s" % input_file_path, end=' ')
             if re.search("^Zip archive data, at least", file_format):
                 mylog.log([input_file, "download_type", "archive"])
-                print extract_zip_to_txt(input_file, input_file_path, temp_archive_output_file_path, temp_dir)
+                print(extract_zip_to_txt(input_file, input_file_path, temp_archive_output_file_path, temp_dir))
                 mylog.log([input_file, "member_type_from_magic_number", magic.from_file(temp_archive_output_file_path)])
                 sort_text_file_by_subtype(input_file, temp_archive_output_file_path, txt_dir, vcf_dir, adna_dir, uk_dir)
                 os.unlink(temp_archive_output_file_path)
@@ -219,7 +219,7 @@ def convert_raw_input_to_txt_or_vcf(input_dir, txt_dir, vcf_dir, adna_dir, uk_di
                 sort_text_file_by_subtype(input_file, input_file_path, txt_dir, vcf_dir, adna_dir, uk_dir)
             elif re.search("^gzip compressed data", file_format):
                 mylog.log([input_file, "download_type", "archive"])
-                print extract_gzip_to_txt(input_file, input_file_path, temp_archive_output_file_path, temp_dir)
+                print(extract_gzip_to_txt(input_file, input_file_path, temp_archive_output_file_path, temp_dir))
                 mylog.log([input_file, "member_type_from_magic_number", magic.from_file(temp_archive_output_file_path)])
                 sort_text_file_by_subtype(input_file, temp_archive_output_file_path, txt_dir, vcf_dir, adna_dir, uk_dir)
                 os.unlink(temp_archive_output_file_path)
@@ -227,11 +227,11 @@ def convert_raw_input_to_txt_or_vcf(input_dir, txt_dir, vcf_dir, adna_dir, uk_di
                 mylog.log([input_file, "download_type", "text"])
                 mylog.log([input_file, "member_type_from_magic_number", file_format])
                 os.rename(input_file_path,vcf_file_path)
-                print "moving %s to %s" % (input_file_path,vcf_file_path)
+                print("moving %s to %s" % (input_file_path,vcf_file_path))
                 mylog.log([input_file, "text_file_subtype", "vcf"])
             else:
                 mylog.log([input_file, "download_type", "other"])
-                print "%s is %s" % (input_file_path, file_format)
+                print("%s is %s" % (input_file_path, file_format))
                 mylog.log([input_file, "member_type_from_magic_number", file_format])
 
 

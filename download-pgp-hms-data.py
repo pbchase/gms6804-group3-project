@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/local/bin/python3
 
 from bs4 import BeautifulSoup
 import pycurl
@@ -51,17 +51,17 @@ def download_files(urls, download_directory, file_names, limit):
     :return:
     """
     download_count = 0
-    for subject in file_names.keys():
+    for subject in list(file_names.keys()):
         if download_count >= limit:
             break
         my_filename = os.path.join(download_directory, file_names[subject])
         if not os.path.isfile(my_filename):
-            print "Downloading " + urls[subject] + \
-                " to " + my_filename
+            print("Downloading " + urls[subject] + \
+                " to " + my_filename)
             download(urls[subject], my_filename)
             download_count += 1
         else:
-            print "Skipping download of " + my_filename
+            print("Skipping download of " + my_filename)
 
 
 # prepend this portion of a URL to every URL we read from the file
@@ -71,7 +71,7 @@ website_root = 'https://my.pgp-hms.org'
 soup = BeautifulSoup(open("23andmeHtmlOnly.htm"), "lxml")
 download_directory = '23andmedata/raw/'
 urls, file_names = extract_23andme_data(soup, website_root)
-print "Subject count: " + str(len(urls))
+print("Subject count: " + str(len(urls)))
 limit = 705  # only download this many files
 download_files(urls, download_directory, file_names, limit)
 # for filename in urls.keys():
