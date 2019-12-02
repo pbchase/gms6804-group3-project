@@ -38,12 +38,12 @@ Note the analysis was done on a Mac. Many of the commands described here a POSIX
 
 ### Download
 
-Execute the command `python3 download-pgp-hms-data.py` to download the vcf files from my.pgp-hms.org. As of November 2019, there are 702 files of SNP data in the PGP-HMS collection. Allow about an hour to download them all.
+Execute the command `python3 download-pgp-hms-data.py` to download the vcf files from my.pgp-hms.org. As of January 2017, there are 701 files that claim to be 23andMe SNP data in the PGP-HMS collection. As of December 2019, there are 870 such files. Allow about an hour to download all of the files.
 
 
 ### Convert download to text
 
-The SNP files downloaded above are a mix of file types from 23andMe, Ancestry DNA, and other sources compressed with a mix of compression algorithms. Each downloaded has to be IDed. Compressed files have to be uncompressed. The contents of each uncompressed file have to be IDed as well. Once the file of SNP data in each download is located and IDed, it has to be sorted into the appropriate bucket for later processing. To extract and ID the SNP files run `python3 make-file-types-consistent.py` 
+The SNP files downloaded above are a mix of file types from 23andMe, Ancestry DNA, and other sources compressed with a mix of compression algorithms. Each downloaded file has to be IDed. Compressed files have to be uncompressed. The contents of each uncompressed file have to be IDed as well. Once the file of SNP data in each download is located and IDed, it has to be sorted into the appropriate bucket for later processing. To extract and ID the SNP files run `python3 make-file-types-consistent.py` 
 
 
 ### Convert text to indexed VCF
